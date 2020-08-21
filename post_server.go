@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/signal"
 
-	//"github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 	//what is the _ here
 	"github.com/alex53856/RouteControlMapREST/handlers"
   
@@ -21,11 +21,14 @@ func main() {
 	l := log.New(os.Stdout, "Hail-Blazer ", log.LstdFlags)
 	asNamesHandler := handlers.NewAS(l)
 
-	sm := http.NewServeMux()
-	sm.Handle("/", asNamesHandler)
-
 	// Init router
-	//r := mux.NewRouter()
+	r := mux.NewRouter()
+	asNamesRouter := r.PathPrefix("/api/as_whois").Subrouter()
+	asNamesRouter.HandleFunc("/asns", asNamesHandler.GetAutonomousSystems)
+	asNamesRouter.HandleFunc("/as_name/{name}", asNamesHandler.GetAutonomousSystemName)
+	asNamesRouter.HandleFunc("/country/{country}", asNamesHandler.GetAutonomousSystemCountry)
+	asNamesRouter.HandleFunc("/asn/{asn}", asNamesHandler.GetAutonomousSystemNumber)
+
 	
 	// Route handles & endpoints
 	//r.HandleFunc("/api/asns", asNamesHandler).Methods("GET")
@@ -36,7 +39,7 @@ func main() {
 	// Configure Server Shizzle
 	s := &http.Server{
 		Addr:":9090",
-		Handler: sm,
+		Handler: r,
 		IdleTimeout: 20*time.Second,
 		ReadTimeout: 3*time.Second,
 		WriteTimeout: 30*time.Second,
