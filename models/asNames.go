@@ -67,7 +67,6 @@ func GetAutonomousSystems() (AutonomousSystems, error) {
 	return AutonomousSystemsList, nil
 }
 func GetAutonomousSystemName(name string) (AutonomousSystems, error) {
-	fmt.Println("Handle GET Autonomous System Name")
 	var AutonomousSystemsList []*ASData
 	//TODO move the select * logic here
 	db, err := connectDB()

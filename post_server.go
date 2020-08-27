@@ -27,7 +27,7 @@ func main() {
 	asNamesRouter.HandleFunc("/asns", asNamesHandler.GetAutonomousSystems)
 	asNamesRouter.HandleFunc("/as_name/{name}", asNamesHandler.GetAutonomousSystemName)
 	asNamesRouter.HandleFunc("/country/{country}", asNamesHandler.GetAutonomousSystemCountry)
-	asNamesRouter.HandleFunc("/asn/{asn}", asNamesHandler.GetAutonomousSystemNumber)
+	asNamesRouter.HandleFunc("/asn/{asn:[0-9]+}", asNamesHandler.GetAutonomousSystemNumber)
 
 	
 	// Route handles & endpoints
