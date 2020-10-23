@@ -20,7 +20,7 @@ const (
 	host     = "localhost"
 	port     = 5432
 	user     = "user"
-	password = "user"
+	password = "alex"
 	dbname   = "routing_information"
 )
 

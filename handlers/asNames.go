@@ -2,7 +2,7 @@ package handlers
 import (
 	"net/http"
 	"log"
-	"github.com/alex53856/RouteControlMapREST/models"
+	"HailBlazer/models"
 	"github.com/gorilla/mux"
 	"strconv"
 )

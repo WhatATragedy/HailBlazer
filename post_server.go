@@ -1,18 +1,18 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
-	"context"
-	"time"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/gorilla/mux"
 	//what is the _ here
-	"github.com/alex53856/RouteControlMapREST/handlers"
-  
+	"HailBlazer/handlers"
 )
+
 //TODO Create a model directory and move structs into there
 //TODO Create a controller to move all the methods there
 //TODO creeate an env file to load in consts
@@ -20,6 +20,7 @@ import (
 func main() {
 	l := log.New(os.Stdout, "Hail-Blazer ", log.LstdFlags)
 	asNamesHandler := handlers.NewAS(l)
+	talHandler := handlers.NewTal(l)
 
 	// Init router
 	r := mux.NewRouter()
@@ -28,8 +29,10 @@ func main() {
 	asNamesRouter.HandleFunc("/as_name/{name}", asNamesHandler.GetAutonomousSystemName)
 	asNamesRouter.HandleFunc("/country/{country}", asNamesHandler.GetAutonomousSystemCountry)
 	asNamesRouter.HandleFunc("/asn/{asn:[0-9]+}", asNamesHandler.GetAutonomousSystemNumber)
+	talRouter := r.PathPrefix("/api/tals").Subrouter()
+	talRouter.HandleFunc("/", talHandler.GetTals)
+	talRouter.HandleFunc("/prefix/{IP}", talHandler.GetTalIP)
 
-	
 	// Route handles & endpoints
 	//r.HandleFunc("/api/asns", asNamesHandler).Methods("GET")
 	//r.HandleFunc("/api/as_name/{name}", getName).Methods("GET")
@@ -38,11 +41,11 @@ func main() {
 
 	// Configure Server Shizzle
 	s := &http.Server{
-		Addr:":9090",
-		Handler: r,
-		IdleTimeout: 20*time.Second,
-		ReadTimeout: 3*time.Second,
-		WriteTimeout: 30*time.Second,
+		Addr:         ":9090",
+		Handler:      r,
+		IdleTimeout:  20 * time.Second,
+		ReadTimeout:  3 * time.Second,
+		WriteTimeout: 30 * time.Second,
 	}
 	// Start server
 	go func() {
