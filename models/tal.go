@@ -79,6 +79,61 @@ func GetTalIP(IP string) (Tals, error) {
 	}
 	return talList, nil
 }
+func GetTalASN(ASN int64) (Tals, error) {
+	var talList []*Tal
+	//TODO move the select * logic here
+	db, err := connectDB()
+	defer db.Close()
+	sqlStatement := "SELECT prefix, asn, ValidFrom, SourceRIR, SourceDate FROM tals WHERE ASN == $1;"
+	rows, err := db.Query(sqlStatement, ASN)
+	if err != nil {
+		panic(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		// create a value into which the single document can be decoded
+		var tal Tal
+		// & character returns the memory address of the following variable.
+		err := rows.Scan(&tal.Prefix, &tal.AutonomousSystem, &tal.ValidFrom, &tal.SourceRIR, &tal.SourceDate) // decode similar to deserialize process.
+		if err != nil {
+			panic(err)
+			return nil, err
+		}
+		// add item our array
+		talList = append(talList, &tal)
+	}
+	return talList, nil
+
+}
+func GetTalRIR(RIR string) (Tals, error) {
+	var talList []*Tal
+	//TODO move the select * logic here
+	db, err := connectDB()
+	defer db.Close()
+	RIR = "%" + RIR + "%"
+	sqlStatement := "SELECT prefix, asn, ValidFrom, SourceRIR, SourceDate FROM tals WHERE sourcerir LIKE $1;"
+	rows, err := db.Query(sqlStatement, RIR)
+	if err != nil {
+		panic(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		// create a value into which the single document can be decoded
+		var tal Tal
+		// & character returns the memory address of the following variable.
+		err := rows.Scan(&tal.Prefix, &tal.AutonomousSystem, &tal.ValidFrom, &tal.SourceRIR, &tal.SourceDate) // decode similar to deserialize process.
+		if err != nil {
+			panic(err)
+			return nil, err
+		}
+		// add item our array
+		talList = append(talList, &tal)
+	}
+	return talList, nil
+
+}
 func (tals *Tals) ToJSON(w io.Writer) error {
 	e := json.NewEncoder(w)
 	return e.Encode(tals)

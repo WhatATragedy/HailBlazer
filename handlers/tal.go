@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -43,6 +44,42 @@ func (tal *Tal) GetTalIP(rw http.ResponseWriter, r *http.Request) {
 	IP := vars["IP"]
 	tal.l.Printf("Handle GET Tals For Prefix/Address %v\n", IP)
 	tals, err := models.GetTalIP(IP)
+	if err != nil {
+		tal.l.Println("Error Gettng Tal Prefix")
+	}
+	// serialize the list to JSON and write it to the response writer
+	err = tals.ToJSON(rw)
+	if err != nil {
+		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+	}
+}
+
+func (tal *Tal) GetTalASN(rw http.ResponseWriter, r *http.Request) {
+	tal.l.Println("Handle GET Tal ASN")
+	vars := mux.Vars(r)
+	ASNStr := vars["ASN"]
+	ASN, err := strconv.ParseInt(ASNStr, 10, 64)
+	if err != nil {
+		fmt.Println(ASNStr, "is not an integer.")
+		http.Error(rw, "Argument is not an integer", http.StatusInternalServerError)
+	}
+	tal.l.Printf("Handle GET Tals For ASN %v\n", ASN)
+	tals, err := models.GetTalASN(ASN)
+	if err != nil {
+		tal.l.Println("Error Gettng Tal Prefix")
+	}
+	// serialize the list to JSON and write it to the response writer
+	err = tals.ToJSON(rw)
+	if err != nil {
+		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+	}
+}
+func (tal *Tal) GetTalRIR(rw http.ResponseWriter, r *http.Request) {
+	tal.l.Println("Handle GET Tal RIR")
+	vars := mux.Vars(r)
+	RIR := vars["RIR"]
+	tal.l.Printf("Handle GET Tals For RIR %v\n", RIR)
+	tals, err := models.GetTalRIR(RIR)
 	if err != nil {
 		tal.l.Println("Error Gettng Tal Prefix")
 	}

@@ -31,7 +31,9 @@ func main() {
 	asNamesRouter.HandleFunc("/asn/{asn:[0-9]+}", asNamesHandler.GetAutonomousSystemNumber)
 	talRouter := r.PathPrefix("/api/tals").Subrouter()
 	talRouter.HandleFunc("/", talHandler.GetTals)
-	talRouter.HandleFunc("/prefix/{IP}", talHandler.GetTalIP)
+	talRouter.HandleFunc("/ip/{IP}", talHandler.GetTalIP)
+	talRouter.HandleFunc("/asn/{ASN}", talHandler.GetTalASN)
+	talRouter.HandleFunc("/rir/{RIR}", talHandler.GetTalRIR)
 
 	// Route handles & endpoints
 	//r.HandleFunc("/api/asns", asNamesHandler).Methods("GET")
